@@ -210,9 +210,11 @@
         <aside>
           <h1>Mux BlurUp Playground</h1>
           <p>Generate a blurry image placeholder for a Mux video.</p>
-          <label for="playback-id">Playback ID</label>
-          <input id="playback-id" value="O6LdRc0112FEJXH00bGsN9Q31yu5EIVHTgjTKRkKtEq1k">
-          <button id="generate-button"><span>Generate</span></button>
+          <form id="generate-form">
+            <label for="playback-id">Playback ID</label>
+            <input id="playback-id" value="O6LdRc0112FEJXH00bGsN9Q31yu5EIVHTgjTKRkKtEq1k">
+            <button id="generate-button" type="submit"><span>Generate</span></button>
+          </form>
         </aside>
         <section>
           <img
@@ -241,7 +243,9 @@
     <script type="module">
       import { createBlurUp } from './blurup.js';
 
-      async function setBlurUp() {
+      async function setBlurUp(event) {
+        event?.preventDefault();
+
         const blurUpImg = document.querySelector('#blurup-image');
         const playbackId = document.querySelector('#playback-id').value;
         const blurUp = await createBlurUp(playbackId);
@@ -258,6 +262,7 @@
 
       setBlurUp();
       document.querySelector('#generate-button').addEventListener('click', setBlurUp);
+      document.querySelector('#generate-form').addEventListener('submit', setBlurUp);
 
       let timeout;
       document.querySelector('#copy-button').addEventListener('click', async function() {
