@@ -20,7 +20,7 @@
     "dev": "wet serve --livereload --cors"
   },
   "devDependencies": {
-    "wet-run": "^1.2.0"
+    "wet-run": "^1.2.1"
   },
   "dependencies": {
     "image-dimensions": "^2.3.0"

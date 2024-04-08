@@ -39,8 +39,10 @@
         grid-template-rows: auto auto 1fr;
       }
 
-      header, main, footer {
-        padding: 0 1.5rem;
+      header,
+      main,
+      footer {
+        padding-inline: .5rem;
       }
 
       .inner {
@@ -84,6 +86,12 @@
       }
 
       @media (width >= 768px) {
+        header,
+        main,
+        footer {
+          padding-inline: 1.5rem;
+        }
+
         main > .inner {
           grid-template-columns: 2fr 3fr;
         }
@@ -113,21 +121,37 @@
         color: var(--gray-6);
       }
 
+      .row {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .row > * {
+        flex-grow: 1;
+        flex-basis: 0;
+      }
+
       label {
         font-size: var(--font-size-0);
         font-weight: var(--font-weight-6);
         display: block;
         margin-top: 1rem;
+        white-space: nowrap;
       }
 
-      input {
+      input,
+      select {
         font-family: 'JetBrains Mono', monospace;
         font-size: var(--font-size-0);
         border-radius: 0;
         background: #FAFAF9;
         margin-top: .5rem;
+        padding: .5rem .7rem;
         display: block;
         width: 100%;
+      }
+
+      input {
         cursor: text;
       }
 
@@ -161,12 +185,15 @@
         transform: translateY(-3px);
       }
 
+      /* Right side */
+
       #blurup-image {
         width: 100%;
         aspect-ratio: 16 / 9;
       }
 
       #blurup-code {
+        display: block;
         font-family: 'JetBrains Mono', monospace;
         font-size: .7rem;
         border-radius: 0;
@@ -175,6 +202,22 @@
         height: 11.5rem;
         margin-top: 1rem;
         padding: .5rem .7rem;
+      }
+
+      .code-group {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #copy-button {
+        margin-top: 0;
+      }
+
+      #code-size {
+        font-size: var(--font-size-0);
+        color: var(--gray-6);
       }
 
       footer .inner {
@@ -211,8 +254,46 @@
           <h1>Mux BlurUp Playground</h1>
           <p>Generate a blurry image placeholder for a Mux video.</p>
           <form id="generate-form">
-            <label for="playback-id">Playback ID</label>
-            <input id="playback-id" value="O6LdRc0112FEJXH00bGsN9Q31yu5EIVHTgjTKRkKtEq1k">
+            <div class="input-group">
+              <label for="playback-id">Playback ID</label>
+              <input id="playback-id" value="O6LdRc0112FEJXH00bGsN9Q31yu5EIVHTgjTKRkKtEq1k">
+            </div>
+            <div class="options">
+              <div class="row">
+                <div class="input-group">
+                  <label for="width">Width</label>
+                  <input id="width" value="100%">
+                </div>
+                <div class="input-group">
+                  <label for="height">Height</label>
+                  <input id="height" value="100%">
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-group">
+                  <label for="time">Time</label>
+                  <input id="time" value="" type="number" min="0">
+                </div>
+                <div class="input-group">
+                  <label for="blur">Blur</label>
+                  <input id="blur" value="20" type="number" min="0">
+                </div>
+              </div>
+              <div class="row">
+                <div class="input-group">
+                  <label for="quality">Quality</label>
+                  <input id="quality" value="1" type="number" min="1">
+                </div>
+                <div class="input-group">
+                  <label for="image-type">Image Type</label>
+                  <select id="image-type">
+                    <option value="webp">WebP</option>
+                    <option value="jpg">JPEG</option>
+                    <option value="png">PNG</option>
+                  </select>
+                </div>
+              </div>
+            </div>
             <button id="generate-button" type="submit"><span>Generate</span></button>
           </form>
         </aside>
@@ -228,7 +309,11 @@
             "
           >
           <textarea id="blurup-code"></textarea>
-          <button id="copy-button"><span>Copy Code</span></button>
+
+          <div class="code-group">
+            <button id="copy-button"><span>Copy Code</span></button>
+            <div id="code-size"></div>
+          </div>
         </section>
       </div>
     </main>
@@ -243,12 +328,17 @@
     <script type="module">
       import { createBlurUp } from './blurup.js';
 
-      async function setBlurUp(event) {
-        event?.preventDefault();
-
+      async function setBlurUp() {
         const blurUpImg = document.querySelector('#blurup-image');
         const playbackId = document.querySelector('#playback-id').value;
-        const blurUp = await createBlurUp(playbackId);
+        const blurUp = await createBlurUp(playbackId, {
+          width: document.querySelector('#width').value,
+          height: document.querySelector('#height').value,
+          time: document.querySelector('#time').value,
+          type: document.querySelector('#image-type').value,
+          blur: document.querySelector('#blur').value,
+          quality: document.querySelector('#quality').value,
+        });
 
         console.log(`BlurUp for ${playbackId}`)
         console.log(JSON.stringify(blurUp, null, 2));
@@ -258,11 +348,21 @@
 
         const blurUpCode = document.querySelector('#blurup-code');
         blurUpCode.value = `${blurUp.blurDataURL}`;
+
+        const codeSize = document.querySelector('#code-size');
+        codeSize.innerHTML = `${byteSize(blurUp.blurDataURL)}B`;
+      }
+
+      function handleForm(event) {
+        event?.preventDefault();
+        setBlurUp();
       }
 
       setBlurUp();
-      document.querySelector('#generate-button').addEventListener('click', setBlurUp);
-      document.querySelector('#generate-form').addEventListener('submit', setBlurUp);
+
+      const form = document.querySelector('#generate-form');
+      form.addEventListener('input', handleForm);
+      form.addEventListener('submit', handleForm);
 
       let timeout;
       document.querySelector('#copy-button').addEventListener('click', async function() {
@@ -279,6 +379,10 @@
           this.style.width = null;
         }, 1000);
       });
+
+      function byteSize(str) {
+        return new Blob([str]).size;
+      }
     </script>
   </body>
 </html>

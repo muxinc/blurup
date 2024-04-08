@@ -35,20 +35,17 @@ console.log(blurDataURL, aspectRatio);
 | time           | `number`           | The video timestamp from which to grab the blurhash. (If you're using a `thumbnailToken`, then the `time` option will have no effect; encode `time` in your token according to the secure video playback guide linked below) | `undefined` |
 | width          | `string`           | Width of the output blurry image placeholder.                                                                                                                                                                                | `100%`      |
 | height         | `string`           | Height of the output blurry image placeholder.                                                                                                                                                                               | `100%`      |
-| precision      | `number`           | Increase this value to see more details but also increase the length of the data URL.                                                                                                                                        | `1`         |
+| blur           | `number`           | Standard deviation of the Gaussian blur.                                                                                                                                                                                     | `20`        |
+| quality        | `number`           | Quality of the output image. Increase this value to see more details but also increase the length of the data URL.                                                                                                           | `1`         |
 | thumbnailToken | `string`           | Videos with playback restrictions may require a thumbnail token. See https://docs.mux.com/guides/video/secure-video-playback for details.                                                                                    | `undefined` |
 | type           | `webp` `png` `jpg` | Image type to use in the output blurry image placeholder.                                                                                                                                                                    | `webp`      |
-
 
 ### Using `blurDataURL` with Mux Player
 
 #### mux-player element
 
 ```html
-<mux-player
-  placeholder="{blurDataURL}"
-  style="aspect-ratio: {aspectRatio}"
-></mux-player>
+<mux-player placeholder="{blurDataURL}" style="aspect-ratio: {aspectRatio}"></mux-player>
 ```
 
 #### mux-player-react and mux-player-react/lazy
@@ -62,7 +59,7 @@ console.log(blurDataURL, aspectRatio);
 #### HTML
 
 ```html
-<img src="{blurDataURL}" width="300" style="aspect-ratio: {aspectRatio}">
+<img src="{blurDataURL}" width="300" style="aspect-ratio: {aspectRatio}" />
 ```
 
 #### CSS
