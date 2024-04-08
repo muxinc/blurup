@@ -40,12 +40,33 @@ console.log(blurDataURL, aspectRatio);
 | thumbnailToken | `string`           | Videos with playback restrictions may require a thumbnail token. See https://docs.mux.com/guides/video/secure-video-playback for details.                                                                                    | `undefined` |
 | type           | `webp` `png` `jpg` | Image type to use in the output blurry image placeholder.                                                                                                                                                                    | `webp`      |
 
+
 ### Using `blurDataURL` with Mux Player
+
+Be sure to escape the double quotes in the `blurDataURL` string when using it in an HTML attribute.
 
 #### mux-player element
 
 ```html
 <mux-player placeholder="{blurDataURL}" style="aspect-ratio: {aspectRatio}"></mux-player>
+```
+
+#### mux-player element with slotted poster ([Demo](https://codesandbox.io/p/sandbox/mux-player-blurup-slotted-poster-wryr46))
+
+```html
+<mux-player style="aspect-ratio: {aspectRatio}">
+  <img 
+    slot="poster"
+    src="{posterURL}"
+    style='
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url("{blurDataURL}");
+    '
+  >
+</mux-player>
 ```
 
 #### mux-player-react and mux-player-react/lazy
@@ -55,6 +76,8 @@ console.log(blurDataURL, aspectRatio);
 ```
 
 ### Using `blurDataURL` with native elements
+
+Be sure to escape the double quotes in the `blurDataURL` string when using it in an HTML attribute.
 
 #### HTML
 
