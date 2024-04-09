@@ -14,6 +14,7 @@
     "url": "git+https://github.com/muxinc/blurup.git"
   },
   "main": "blurup.js",
+  "types": "blurup.d.ts",
   "files": [],
   "scripts": {
     "lint": "npx -y eslint@8 *.js -c ./node_modules/wet-run/.eslintrc.json",
