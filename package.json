@@ -15,7 +15,7 @@
   },
   "main": "blurup.js",
   "types": "blurup.d.ts",
-  "files": [],
+  "files": ["blurup.d.ts"],
   "scripts": {
     "lint": "npx -y eslint@8 *.js -c ./node_modules/wet-run/.eslintrc.json",
     "dev": "wet serve --livereload --cors"
