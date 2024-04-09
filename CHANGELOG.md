@@ -1,3 +1,12 @@
+## [0.2.2](https://github.com/muxinc/blurup/compare/v0.2.1...v0.2.2) (2024-04-09)
+
+
+### Bug Fixes
+
+* add .d.ts file to pack ([df2787c](https://github.com/muxinc/blurup/commit/df2787cbe60a8b71260c4179f8c4512be5735472))
+
+
+
 ## [0.2.1](https://github.com/muxinc/blurup/compare/v0.2.0...v0.2.1) (2024-04-09)
 
 
