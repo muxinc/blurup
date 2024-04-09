@@ -91,3 +91,5 @@ function svgBlurImage(tinyImageDataURL, width, height, stdDeviation) {
   const svg = /*html*/`<svg xmlns="http://www.w3.org/2000/svg" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}><filter id="b" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="${stdDeviation}"/><feComponentTransfer><feFuncA type="discrete" tableValues="1 1"/></feComponentTransfer></filter><g filter="url(#b)"><image width="100%" height="100%" href="${tinyImageDataURL}"/></g></svg>`;
   return svg.replace(/#/g, '%23');
 }
+
+export default createBlurUp;
