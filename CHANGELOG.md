@@ -1,3 +1,12 @@
+## [0.2.1](https://github.com/muxinc/blurup/compare/v0.2.0...v0.2.1) (2024-04-09)
+
+
+### Bug Fixes
+
+* types pkg entry point ([a5a1c12](https://github.com/muxinc/blurup/commit/a5a1c126982885165287a5a27aba86afe973893b))
+
+
+
 # [0.2.0](https://github.com/muxinc/blurup/compare/v0.1.0...v0.2.0) (2024-04-09)
 
 
