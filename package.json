@@ -1,6 +1,6 @@
 {
   "name": "@mux/blurup",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Generate a blurry image placeholder for a Mux video.",
   "author": "@muxinc",
@@ -15,7 +15,9 @@
   },
   "main": "blurup.js",
   "types": "blurup.d.ts",
-  "files": ["blurup.d.ts"],
+  "files": [
+    "blurup.d.ts"
+  ],
   "scripts": {
     "lint": "npx -y eslint@8 *.js -c ./node_modules/wet-run/.eslintrc.json",
     "dev": "wet serve --livereload --cors"
