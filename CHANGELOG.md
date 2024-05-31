@@ -1,3 +1,12 @@
+## [0.2.3](https://github.com/muxinc/blurup/compare/v0.2.2...v0.2.3) (2024-05-31)
+
+
+### Bug Fixes
+
+* make sizing "cover" ([de3b8be](https://github.com/muxinc/blurup/commit/de3b8be0f6b0a46f2df503d6794f9c841dd768ec))
+
+
+
 ## [0.2.2](https://github.com/muxinc/blurup/compare/v0.2.1...v0.2.2) (2024-04-09)
 
 
