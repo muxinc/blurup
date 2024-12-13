@@ -1,4 +1,4 @@
-import { imageDimensionsFromData } from 'image-dimensions';
+import { imageDimensionsFromStream } from 'image-dimensions';
 
 const defaultOptions = {
   type: 'webp',
@@ -83,9 +83,8 @@ export async function createBlurUp(playbackId, options) {
     );
   }
 
-  const [arrayBuffer, sourceArrayBuffer] = await Promise.all([response.arrayBuffer(), sourceResponse.arrayBuffer()]);
-
   // first, let's get the small image and blur it up a bit
+  const arrayBuffer = await response.arrayBuffer();
   const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
   const imageDataURL = `data:${response.headers.get('content-type')};base64,${base64String}`;
   const blurDataURL =
@@ -94,7 +93,7 @@ export async function createBlurUp(playbackId, options) {
   : `data:image/svg+xml;charset=utf-8,${svgBlurImage(imageDataURL, svgWidth, svgHeight, blur)}`;
   
   // next, let's get the image size from the source image response
-  const { width, height } = imageDimensionsFromData(sourceArrayBuffer);
+  const { width, height } = await imageDimensionsFromStream(sourceResponse.body);
   const aspectRatio = width / height;
 
   return {
