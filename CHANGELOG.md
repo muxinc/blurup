@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/muxinc/blurup/compare/v1.0.0...v1.0.1) (2024-12-13)
+
+
+### Bug Fixes
+
+* [].push stack overflow if image data too big ([#6](https://github.com/muxinc/blurup/issues/6)) ([47ac437](https://github.com/muxinc/blurup/commit/47ac4376bbb9cfafce02ef6eaf16eb015e4a9162))
+
+
+
 # [1.0.0](https://github.com/muxinc/blurup/compare/v0.2.3...v1.0.0) (2024-12-13)
 
 
