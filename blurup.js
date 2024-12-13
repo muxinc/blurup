@@ -50,51 +50,18 @@ export async function createBlurUp(playbackId, options) {
     imageURL.searchParams.set('token', thumbnailToken);
   }
 
-  const fetchOptions =  { headers: { Accept: `image/${type}` } }
-  const imageFetch = fetch(imageURL, fetchOptions);
+  const fetchOptions = { headers: { Accept: `image/${type}` } };
 
-  // we also want to fetch the full-size source image from mux,
-  // so that we can measure its width and height
-  const sourceURL = new URL(imageURL);
-  sourceURL.searchParams.delete('width');
-  sourceURL.searchParams.delete('height');
-  const sourceFetch = fetch(sourceURL, fetchOptions);
+  const [{ width, height }, imageDataURL] = await Promise.all([
+    getSourceImageDimensions(new URL(imageURL), fetchOptions),
+    getTinyImageDataURL(new URL(imageURL), fetchOptions),
+  ]);
 
-  const [response, sourceResponse] = await Promise.all([imageFetch, sourceFetch]);
-  
-
-  if (response.status === 403 || sourceResponse.status === 403) {
-    if (typeof options.thumbnailToken !== 'undefined') {
-      throw new Error(
-        `[@mux/blurup] Error fetching thumbnail. 403: Forbidden. The thumbnailToken option may be invalid. See https://docs.mux.com/guides/video/secure-video-playback for more information.`
-      );
-    } else {
-      throw new Error(
-        `[@mux/blurup] Error fetching thumbnail. 403: Forbidden. This Playback ID may require a thumbnail token. See https://docs.mux.com/guides/video/secure-video-playback for more information.`
-      );
-    }
-  } else if (response.status >= 400 ) {
-    throw new Error(
-      `[@mux/blurhash] Error fetching thumbnail. ${response.status}: ${response.statusText}`
-    );
-  } else if (sourceResponse.status >= 400 ) {
-    throw new Error(
-      `[@mux/blurhash] Error fetching thumbnail. ${sourceResponse.status}: ${sourceResponse.statusText}`
-    );
-  }
-
-  // first, let's get the small image and blur it up a bit
-  const arrayBuffer = await response.arrayBuffer();
-  const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
-  const imageDataURL = `data:${response.headers.get('content-type')};base64,${base64String}`;
-  const blurDataURL =
-  blur == 0
-  ? imageDataURL
-  : `data:image/svg+xml;charset=utf-8,${svgBlurImage(imageDataURL, svgWidth, svgHeight, blur)}`;
-  
-  // next, let's get the image size from the source image response
-  const { width, height } = await imageDimensionsFromStream(sourceResponse.body);
   const aspectRatio = width / height;
+  const blurDataURL =
+    blur == 0
+      ? imageDataURL
+      : `data:image/svg+xml;charset=utf-8,${svgBlurImage(imageDataURL, svgWidth, svgHeight, blur)}`;
 
   return {
     width,
@@ -106,8 +73,46 @@ export async function createBlurUp(playbackId, options) {
   };
 }
 
+async function getSourceImageDimensions(imageURL, fetchOptions) {
+  // we also want to fetch the full-size source image from mux,
+  // so that we can measure its width and height
+  imageURL.searchParams.delete('width');
+  imageURL.searchParams.delete('height');
+  const response = await fetch(imageURL, fetchOptions);
+  validateResponse(imageURL, response);
+
+  return imageDimensionsFromStream(response.body);
+}
+
+async function getTinyImageDataURL(imageURL, fetchOptions) {
+  const response = await fetch(imageURL, fetchOptions);
+  validateResponse(imageURL, response);
+
+  const arrayBuffer = await response.arrayBuffer();
+  const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+  return `data:${response.headers.get('content-type')};base64,${base64String}`;
+}
+
+function validateResponse(imageURL, response) {
+  if (response.status === 403) {
+    if (imageURL.searchParams.has('token')) {
+      throw new Error(
+        `[@mux/blurup] Error fetching thumbnail. 403: Forbidden. The thumbnailToken option may be invalid. See https://docs.mux.com/guides/video/secure-video-playback for more information.`
+      );
+    } else {
+      throw new Error(
+        `[@mux/blurup] Error fetching thumbnail. 403: Forbidden. This Playback ID may require a thumbnail token. See https://docs.mux.com/guides/video/secure-video-playback for more information.`
+      );
+    }
+  } else if (response.status >= 400) {
+    throw new Error(
+      `[@mux/blurhash] Error fetching thumbnail. ${response.status}: ${response.statusText}`
+    );
+  }
+}
+
 function svgBlurImage(tinyImageDataURL, width, height, stdDeviation) {
-  const svg = /*html*/`<svg xmlns="http://www.w3.org/2000/svg" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}><filter id="b" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="${stdDeviation}"/><feComponentTransfer><feFuncA type="discrete" tableValues="1 1"/></feComponentTransfer></filter><g filter="url(#b)"><image width="100%" height="100%" preserveAspectRatio="xMidYMid slice" href="${tinyImageDataURL}"/></g></svg>`;
+  const svg = /*html*/ `<svg xmlns="http://www.w3.org/2000/svg" ${width ? `width="${width}"` : ''} ${height ? `height="${height}"` : ''}><filter id="b" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="${stdDeviation}"/><feComponentTransfer><feFuncA type="discrete" tableValues="1 1"/></feComponentTransfer></filter><g filter="url(#b)"><image width="100%" height="100%" preserveAspectRatio="xMidYMid slice" href="${tinyImageDataURL}"/></g></svg>`;
   return svg.replace(/#/g, '%23');
 }
 
