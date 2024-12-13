@@ -34,8 +34,8 @@ export async function createBlurUp(playbackId, options) {
 
   quality = parseFloat(quality);
 
-  if (isNaN(quality) || quality <= 0) {
-    throw new Error('[@mux/blurup] Quality must be greater than 0');
+  if (isNaN(quality) || quality < 1) {
+    throw new Error('[@mux/blurup] Quality must be greater or equal to 1');
   }
   imageURL.searchParams.set('width', 16 * quality);
   imageURL.searchParams.set('height', 16 * quality);
