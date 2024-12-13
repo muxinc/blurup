@@ -1,4 +1,4 @@
-import { imageDimensionsFromStream } from 'image-dimensions';
+import { imageDimensionsFromData } from 'image-dimensions';
 
 const defaultOptions = {
   type: 'webp',
@@ -82,6 +82,19 @@ async function getSourceImageDimensions(imageURL, fetchOptions) {
   validateResponse(imageURL, response);
 
   return imageDimensionsFromStream(response.body);
+}
+
+async function imageDimensionsFromStream(stream) {
+  let chunks = [];
+
+  for await (const chunk of stream) {
+    chunks = [...chunks, ...chunk];
+
+    const dimensions = imageDimensionsFromData(new Uint8Array(chunks));
+    if (dimensions) {
+      return dimensions;
+    }
+  }
 }
 
 async function getTinyImageDataURL(imageURL, fetchOptions) {
