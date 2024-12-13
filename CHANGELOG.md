@@ -1,3 +1,12 @@
+# [1.0.0](https://github.com/muxinc/blurup/compare/v0.2.3...v1.0.0) (2024-12-13)
+
+
+### Bug Fixes
+
+* async / await issue leading to stack overflow ([#5](https://github.com/muxinc/blurup/issues/5)) ([89945cc](https://github.com/muxinc/blurup/commit/89945cc2373c5d17ce237a241700183a3b160911))
+
+
+
 ## [0.2.3](https://github.com/muxinc/blurup/compare/v0.2.2...v0.2.3) (2024-05-31)
 
 
