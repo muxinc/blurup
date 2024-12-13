@@ -1,6 +1,6 @@
 {
   "name": "@mux/blurup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Generate a blurry image placeholder for a Mux video.",
   "author": "@muxinc",
