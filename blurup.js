@@ -86,9 +86,20 @@ async function getSourceImageDimensions(imageURL, fetchOptions) {
 
 async function imageDimensionsFromStream(stream) {
   let chunks = [];
+  const reader = stream.getReader();
 
-  for await (const chunk of stream) {
-    chunks = [...chunks, ...chunk];
+  // Don't use a for await loop here, as it will cause the function to hang in Next.js (prod, draft mode)
+  // https://github.com/muxinc/blurup/pull/8
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+
+    // Don't use [].push(...value) here, as it will cause a stackoverflow
+    // https://github.com/muxinc/blurup/pull/6
+    chunks = [...chunks, ...value];
 
     const dimensions = imageDimensionsFromData(new Uint8Array(chunks));
     if (dimensions) {
