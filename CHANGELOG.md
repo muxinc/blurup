@@ -1,3 +1,12 @@
+## [1.0.2](https://github.com/muxinc/blurup/compare/v1.0.1...v1.0.2) (2025-05-20)
+
+
+### Bug Fixes
+
+* hanging in Next.js (prod, draft mode) ([#8](https://github.com/muxinc/blurup/issues/8)) ([98200eb](https://github.com/muxinc/blurup/commit/98200eba9992806f361b4cf98bc81b3b05e8ccc8))
+
+
+
 ## [1.0.1](https://github.com/muxinc/blurup/compare/v1.0.0...v1.0.1) (2024-12-13)
 
 
