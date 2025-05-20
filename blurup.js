@@ -86,9 +86,16 @@ async function getSourceImageDimensions(imageURL, fetchOptions) {
 
 async function imageDimensionsFromStream(stream) {
   let chunks = [];
+  const reader = stream.getReader();
 
-  for await (const chunk of stream) {
-    chunks = [...chunks, ...chunk];
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+
+    chunks = [...chunks, ...value];
 
     const dimensions = imageDimensionsFromData(new Uint8Array(chunks));
     if (dimensions) {
