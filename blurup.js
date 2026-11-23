@@ -113,8 +113,19 @@ async function getTinyImageDataURL(imageURL, fetchOptions) {
   validateResponse(imageURL, response);
 
   const arrayBuffer = await response.arrayBuffer();
-  const base64String = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+  const base64String = bytesToBase64(new Uint8Array(arrayBuffer));
   return `data:${response.headers.get('content-type')};base64,${base64String}`;
+}
+
+// Spreading every byte into String.fromCharCode() exceeds the engine's
+// argument limit on large images, so encode in bounded chunks instead.
+function bytesToBase64(bytes) {
+  const chunkSize = 0x8000;
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
 
 function validateResponse(imageURL, response) {
